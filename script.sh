@@ -15,8 +15,7 @@ read verify <<< $(awk 'NR==1' release_exist)
 rm -f release_exist
 
 if [ $verify = $CURRENT_VERSION ]; then
-	echo "exist===================================================="
-	exit
+	echo "$CURRENT_VERSION branche still exists"; exit
 fi
 
 echo "Bump Version"
@@ -46,13 +45,9 @@ git push --set-upstream origin $NEW_BRANCH
 echo "Creating new milestone version"
 CREATE_NEW_MILESTONE=1
 counter=1
-echo "~~~~begin"
 curl -H "Authorization: token $1" \
 "https://api.github.com/repos/tinder-dmytroryshchuk/milestone/milestones" > milestones_json
-echo "~~~~stack"
 cat milestones_json | jq '.[].title' > milestones_title
-
-echo "~~~~countion"
 cat milestones_json | jq '.[].number' > milestones_number
 echo "~~~~stop"
 while read milestones_title
@@ -60,8 +55,8 @@ do
 	echo "~~~~here"
 	read milestone <<< $(awk 'NR=="'$counter'"' milestones_title)
 	if [ $milestone -eq $NEW_BRANCH ]; then
-		echo "~~Milestone version is already exist~~"
 		read number <<< $(awk 'NR=="'$counter'"' milestones_number)
+		echo "~~Milestone $number is already exist~~"
 		NEW_MILESTONE_NUMBER=$number
 		CREATE_NEW_MILESTONE=0
 	fi
