@@ -42,6 +42,7 @@ echo NEW_BRANCH=${NEW_BRANCH} >new_branch
 echo "Pushing"
 git push --set-upstream origin $NEW_BRANCH
 
+
 echo "Creating new milestone version"
 CREATE_NEW_MILESTONE=1
 counter=1
@@ -60,7 +61,8 @@ do
 		NEW_MILESTONE_NUMBER=$number
 		CREATE_NEW_MILESTONE=0
 	fi
-done > milestones_title
+	((counter++))
+done < milestones_title
 if [ $CREATE_NEW_MILESTONE -eq 1 ]; then
 	echo "~~~~go"
 	NEW_MINOR=$(($MINOR+2))
