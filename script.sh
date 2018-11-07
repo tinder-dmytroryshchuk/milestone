@@ -50,10 +50,8 @@ curl -H "Authorization: token $1" \
 "https://api.github.com/repos/tinder-dmytroryshchuk/milestone/milestones" > milestones_json
 cat milestones_json | jq '.[].title' > milestones_title
 cat milestones_json | jq '.[].number' > milestones_number
-echo "~~~~stop"
 while read milestones_title
 do
-	echo "~~~~here"
 	read milestone <<< $(awk 'NR=="'$counter'"' milestones_title)
 	if [ $milestone -eq $NEW_BRANCH ]; then
 		read number <<< $(awk 'NR=="'$counter'"' milestones_number)
@@ -64,7 +62,6 @@ do
 	((counter++))
 done < milestones_title
 if [ $CREATE_NEW_MILESTONE -eq 1 ]; then
-	echo "~~~~go"
 	NEW_MINOR=$(($MINOR+2))
 	NEW_VERSION=${MAJOR}.${NEW_MINOR}.0
 	due_date=$(date -v +14d '+%Y-%m-%d')"T17:00:00Z"
