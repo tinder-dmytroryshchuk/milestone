@@ -44,6 +44,8 @@ git push --set-upstream origin $NEW_BRANCH
 
 
 echo "Creating new milestone version"
+BRANCH=${MAJOR}.$(($MINOR+1)).0
+MILESTONE="\"$BRANCH\""
 CREATE_NEW_MILESTONE=1
 counter=1
 curl -H "Authorization: token $1" \
@@ -52,8 +54,11 @@ cat milestones_json | jq '.[].title' > milestones_title
 cat milestones_json | jq '.[].number' > milestones_number
 while read milestones_title
 do
+	echo "========================= exists ========================="
 	read milestone <<< $(awk 'NR=="'$counter'"' milestones_title)
-	if [ $milestone -eq $NEW_BRANCH ]; then
+	echo $milestone
+	echo $MILESTONE
+	if [ $milestone == $MILESTONE ]; then
 		read number <<< $(awk 'NR=="'$counter'"' milestones_number)
 		echo "~~Milestone $number is already exist~~"
 		NEW_MILESTONE_NUMBER=$number
@@ -65,13 +70,16 @@ if [ $CREATE_NEW_MILESTONE -eq 1 ]; then
 	NEW_MINOR=$(($MINOR+2))
 	NEW_VERSION=${MAJOR}.${NEW_MINOR}.0
 	due_date=$(date -v +14d '+%Y-%m-%d')"T17:00:00Z"
-	echo "~~" $NEW_VERSION " verion of milestone was created~~"
+	echo "~~" $NEW_VERSION "version of milestone was created~~"
 	curl -H "Authorization: token $1" --include --request POST \
 	--data '{"title":"'${NEW_VERSION}'", "due_on": "'$due_date'"}' \
-	"https://api.github.com/repos/tinder-dmytroryshchuk/milestone/milestones" > new_milestone_json
-	sed -n '27,63 p' new_milestone_json | jq -r ".number" > new_milestone_number
-	read NEW_MILESTONE_NUMBER <<< $(awk 'NR==1' new_milestone_number )
+	"https://api.github.com/repos/tinder-dmytroryshchuk/milestone/milestones" > json
+	sed -n '/{/,/} /p' json > new_milestone_json
+	cat new_milestone_json | jq -r ".number" > new_milestone_number
+	read NEW_MILESTONE_NUMBER <<< $(awk 'NR==1' new_milestone_number)
 fi
+rm -f json new_milestone_json new_milestone_number milestones_json milestones_number milestones_title
+
 
 echo "Get milestone number"
 curl https://api.github.com/repos/tinder-dmytroryshchuk/milestone/milestones > file
@@ -103,6 +111,7 @@ while [ $MILESTONE_NUMBER -lt $NEW_MILESTONE_NUMBER ]; do
 	while read pr_number
 	do
 		read pr_nb <<< $(awk 'NR=="'$counter'"' pr_number)
+		echo "== $pr_nb updating... =="
 		((counter++))
 		curl -H "Authorization: token $1" \
 		"https://api.github.com/repos/tinder-dmytroryshchuk/milestone/issues/$pr_nb/labels" | jq -r ".[].name" > label_names
@@ -125,7 +134,7 @@ while [ $MILESTONE_NUMBER -lt $NEW_MILESTONE_NUMBER ]; do
 			"https://api.github.com/repos/tinder-dmytroryshchuk/milestone/pulls/$pr_nb"
 		fi
 	done < pr_number
-	rm -f pr_number label_names
+	# rm -f pr_number label_names
 	MILESTONE_NUMBER=$(($MILESTONE_NUMBER+1))
 done
 
