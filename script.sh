@@ -67,7 +67,7 @@ do
 	((counter++))
 done < milestones_title
 if [ $CREATE_NEW_MILESTONE -eq 1 ]; then
-	NEW_MINOR=$(($MINOR+2))
+	NEW_MINOR=$(($MINOR+1))
 	NEW_VERSION=${MAJOR}.${NEW_MINOR}.0
 	due_date=$(date -v +14d '+%Y-%m-%d')"T17:00:00Z"
 	echo "~~" $NEW_VERSION "version of milestone was created~~"
@@ -134,7 +134,7 @@ while [ $MILESTONE_NUMBER -lt $NEW_MILESTONE_NUMBER ]; do
 			"https://api.github.com/repos/tinder-dmytroryshchuk/milestone/pulls/$pr_nb"
 		fi
 	done < pr_number
-	# rm -f pr_number label_names
+	rm -f pr_number label_names
 	MILESTONE_NUMBER=$(($MILESTONE_NUMBER+1))
 done
 
