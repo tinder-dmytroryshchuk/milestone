@@ -5,6 +5,8 @@ MAJOR="$( cut -d '.' -f 1 <<< "$version" )"
 MINOR="$( cut -d '.' -f 2 <<< "$version" )"
 PATCH="$( cut -d '.' -f 3 <<< "$version" )"
 
+CURRENT_VERSION=release/${MAJOR}.${MINOR}.0
+
 echo "Creating new milestone version"
 BRANCH=${MAJOR}.$(($MINOR)).0
 MILESTONE="\"$BRANCH\""
@@ -101,4 +103,4 @@ while [ $MILESTONE_NUMBER -lt $NEW_MILESTONE_NUMBER ]; do
 done
 
 echo "Switching back to develop"
-git checkout develop
+git checkout master
