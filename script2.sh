@@ -8,7 +8,7 @@ PATCH="$( cut -d '.' -f 3 <<< "$version" )"
 CURRENT_VERSION=release/${MAJOR}.${MINOR}.0
 
 echo "Creating new milestone version"
-BRANCH=${MAJOR}.$(($MINOR)).0
+BRANCH=${MAJOR}.$(($MINOR+1)).0
 MILESTONE="\"$BRANCH\""
 CREATE_NEW_MILESTONE=1
 counter=1
@@ -31,7 +31,7 @@ do
 	((counter++))
 done < milestones_title
 if [ $CREATE_NEW_MILESTONE -eq 1 ]; then
-	NEW_MINOR=$(($MINOR))
+	NEW_MINOR=$(($MINOR+1))
 	NEW_VERSION=${MAJOR}.${NEW_MINOR}.0
 	due_date=$(date -v +14d '+%Y-%m-%d')"T17:00:00Z"
 	echo "~~" $NEW_VERSION "version of milestone was created~~"

@@ -30,17 +30,13 @@ build_number=$(printf "%d%02d%02d00" "$MAJOR" "$NEW_MINOR" 0)
 
 echo "Committing the change"
 git add mile/mile/Info.plist
-echo "NOW======1"
 git commit -m "Preparing for next release $NEW_VERSION"
 git push
-echo "NOW======2"
 
 NEW_BRANCH=release/${MAJOR}.$(($MINOR+1)).0
 echo "Creating branch $NEW_BRANCH"
 git checkout -b $NEW_BRANCH
 echo NEW_BRANCH=${NEW_BRANCH} >new_branch
-echo "NOW======3"
 
 echo "Pushing"
 git push --set-upstream origin $NEW_BRANCH
-echo "NOW======4"
