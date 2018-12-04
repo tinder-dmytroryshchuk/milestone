@@ -33,10 +33,9 @@ done < milestones_title
 if [ $CREATE_NEW_MILESTONE -eq 1 ]; then
 	NEW_MINOR=$(($MINOR+1))
 	NEW_VERSION=${MAJOR}.${NEW_MINOR}.0
-	due_date=$(date -v +14d '+%Y-%m-%d')"T17:00:00Z"
 	echo "~~" $NEW_VERSION "version of milestone was created~~"
 	curl -H "Authorization: token $1" --include --request POST \
-	--data '{"title":"'${NEW_VERSION}'", "due_on": "'$due_date'"}' \
+	--data '{"title":"'${NEW_VERSION}'"}' \
 	"https://api.github.com/repos/tinder-dmytroryshchuk/milestone/milestones" > json
 	sed -n '/{/,/} /p' json > new_milestone_json
 	cat new_milestone_json | jq -r ".number" > new_milestone_number
